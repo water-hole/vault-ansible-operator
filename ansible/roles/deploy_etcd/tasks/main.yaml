@@ -1,0 +1,4 @@
+---
+- name: deploy ETCD cluster test
+  debug:
+    msg: "{{ default_print_msg }} - {{ my_global_str }}"

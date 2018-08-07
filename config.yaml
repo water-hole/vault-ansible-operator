@@ -1,0 +1,6 @@
+---
+- name: Ansible-vault
+  version: v1alpha1
+  group: vault.coreos.com
+  kind: Vault
+  path: /opt/ansible/playbook.yaml
