@@ -4,7 +4,8 @@ metadata:
   name: ansible-operator
 rules:
 - apiGroups:
-  - vault.coreos.com
+  - vault.security.coreos.com
+  - extensions
   resources:
   - "*"
   verbs:

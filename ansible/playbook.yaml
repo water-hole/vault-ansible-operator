@@ -2,6 +2,12 @@
   tasks:
   - debug: msg="Running Vault Ansible Operator Playbook"
   - import_role:
+      name: "get_status"
+  - import_role:
+      name: "tls_certs"
+    when: (secrets_lookup|length==0)
+  - import_role:
       name: "deploy_etcd"
+    when: (etcd_cr_lookup|length==0)
   - import_role:
       name: "deploy_vault"

@@ -1,2 +1,10 @@
 ---
-default_print_msg: "this is deploy_etcd ROLE"
+etcd_cluster_size: 3
+
+etcd_certs_dir: /files/
+
+etcd_api_version: "etcd.database.coreos.com/v1beta2"
+
+etcd_repository: "quay.io/coreos/etcd"
+
+state: "present"

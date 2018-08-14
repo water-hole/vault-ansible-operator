@@ -1,0 +1,125 @@
+---
+- name: Vault Deployment
+  k8s:
+    definition:
+      kind: Deployment
+      apiVersion: "extensions/v1beta1"
+      metadata:
+        name: "{{ vault_cluster_name }}"
+        namespace: "{{ namespace }}"
+        labels:
+          app: vault
+          vault_cluster: example
+      spec:
+        replicas: "{{ vault_replicas }}"
+        selector:
+          matchLabels:
+            app: "{{ vault_app_name }}"
+            vault_cluster: "{{ vault_cluster_name }}"
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 1
+            maxSurge: 1
+        template:
+          metadata:
+            name: "{{ vault_cluster_name }}"
+#            namespace: "{{ namespace }}"
+            labels:
+              app: "{{ vault_app_name }}"
+              vault_cluster: "{{ vault_cluster_name }}"
+          spec:
+            containers:
+            - name: vault
+              image: quay.io/coreos/vault:0.9.1-0
+              imagePullPolicy: IfNotPresent
+              command:
+              - /bin/vault
+              - server
+              - -config=/run/vault/config/vault.hcl
+              env:
+              - name: VAULT_API_ADDR
+                value: https://example.default.svc:8200
+              - name: VAULT_CLUSTER_ADDR
+                value: https://example.default.svc:8201
+              volumeMounts:
+              - mountPath: /run/vault/config
+                name: vault-config
+              - mountPath: /run/vault/tls/
+                name: vault-tls-secret
+                readOnly: true
+              securityContext:
+                capabilities:
+                  add:
+                  - IPC_LOCK
+              ports:
+              - containerPort: 8200
+                name: vault-client
+                protocol: TCP
+              - containerPort: 8201
+                name: vault-cluster
+                protocol: TCP
+              livenessProbe:
+                exec:
+                  command:
+                  - curl
+                  - --connect-timeout
+                  - "5"
+                  - --max-time
+                  - "10"
+                  - -k
+                  - -s
+                  - https://localhost:8200/v1/sys/health
+                failureThreshold: 3
+                initialDelaySeconds: 10
+                periodSeconds: 60
+                successThreshold: 1
+                timeoutSeconds: 10
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /v1/sys/health
+                  port: 8200
+                  scheme: HTTPS
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 10
+              resources: {}
+            - image: prom/statsd-exporter:v0.5.0
+              imagePullPolicy: IfNotPresent
+              name: statsd-exporter
+              ports:
+              - containerPort: 9125
+                name: statsd
+                protocol: UDP
+              - containerPort: 9102
+                name: prometheus
+                protocol: TCP
+              resources: {}
+              volumes:
+              - configMap:
+                  defaultMode: 420
+                  name: example-copy
+                name: vault-config
+              - name: vault-tls-secret
+                projected:
+                  defaultMode: 420
+                  sources:
+                  - secret:
+                      name: example-etcd-client-tls
+                  - secret:
+                      name: example-default-vault-server-tls
+            volumes:
+            - configMap:
+                defaultMode: 420
+                name: example-copy
+              name: vault-config
+            - name: vault-tls-secret
+              projected:
+                defaultMode: 420
+                sources:
+                - secret:
+                    name: example-etcd-client-tls
+                - secret:
+                    name: example-default-vault-server-tls
