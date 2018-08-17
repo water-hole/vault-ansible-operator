@@ -1,4 +1,12 @@
 ---
-- name: deploy VAULT cluster test
-  debug:
-    msg: "{{ default_print_msg }} - {{ my_global_str }}"
+- name: Create configmap
+  include_tasks: configmap.yaml
+  when: (configmap_lookup|length==0)
+
+- name: Deploy Vault
+  include: deployment.yaml
+  when: (vault_deployment_lookup|length==0)
+
+- name: Create service
+  include_tasks: service.yaml
+  when: (services_lookup|length==0)

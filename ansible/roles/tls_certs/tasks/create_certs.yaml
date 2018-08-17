@@ -1,0 +1,18 @@
+---
+- name: Reading Peer TLS Files
+  set_fact:
+    peer_key: "{{lookup('file', '/opt/tls_certs/peer.key') }}"
+    peer_cert: "{{lookup('file', '/opt/tls_certs/peer.crt') }}"
+    peer_ca: "{{lookup('file', '/opt/tls_certs/peer-ca.crt') }}"
+
+- name: Reading Server TLS Files
+  set_fact:
+    server_key: "{{lookup('file', '/opt/tls_certs/server.key') }}"
+    server_cert: "{{lookup('file', '/opt/tls_certs/server.crt') }}"
+    server_ca: "{{lookup('file', '/opt/tls_certs/server-ca.crt') }}"
+
+- name: Reading Client TLS Files
+  set_fact:
+    client_key: "{{lookup('file', '/opt/tls_certs/etcd-client.key') }}"
+    client_cert: "{{lookup('file', '/opt/tls_certs/etcd-client.crt') }}"
+    client_ca: "{{lookup('file', '/opt/tls_certs/etcd-client-ca.crt') }}"

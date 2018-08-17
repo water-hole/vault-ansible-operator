@@ -1,2 +1,12 @@
 ---
-my_global_str: "I LOVE K8S & Ansible!"
+namespace: "default"
+etcd_cluster_name: "example-etcd"
+
+vault_app_name: "vault"
+vault_cluster_name: "example"
+
+etcd_peer_secret_name: "{{ vault_cluster_name }}-etcd-peer-tls"
+etcd_client_secret_name: "{{ vault_cluster_name }}-etcd-client-tls"
+etcd_server_secret_name: "{{ vault_cluster_name }}-etcd-server-tls"
+vault_client_secret_name: "{{ vault_cluster_name }}-default-vault-client-tls"
+vault_server_secret_name: "{{ vault_cluster_name }}-default-vault-server-tls"

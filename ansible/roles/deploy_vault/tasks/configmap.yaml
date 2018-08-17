@@ -1,0 +1,21 @@
+---
+- name: create a configmap
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      data:
+        "vault.hcl": "\ntelemetry {\n\tstatsd_address = \"localhost:9125\"\n}\n\nlistener
+          \"tcp\" {\n  address     = \"0.0.0.0:8200\"\n  cluster_address = \"0.0.0.0:8201\"\n
+          \ tls_cert_file = \"/run/vault/tls/server.crt\"\n  tls_key_file  = \"/run/vault/tls/server.key\"\n}\n\nstorage
+          \"etcd\" {\n  address = \"https://example-etcd-client:2379\"\n  etcd_api = \"v3\"\n
+          \ ha_enabled = \"true\"\n  tls_ca_file = \"/run/vault/tls/etcd-client-ca.crt\"\n
+          \ tls_cert_file = \"/run/vault/tls/etcd-client.crt\"\n  tls_key_file = \"/run/vault/tls/etcd-client.key\"\n
+          \ sync = \"false\"\n}\n"
+      kind: ConfigMap
+      metadata:
+        labels:
+          app: vault
+          vault_cluster: example
+        name: example-copy
+        namespace: default
