@@ -11,3 +11,5 @@
     when: (etcd_cr_lookup|length==0)
   - import_role:
       name: "deploy_vault"
+  - debug: msg="vault_replica_size - {{ vault_replica_size }}"
+

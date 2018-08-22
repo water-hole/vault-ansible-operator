@@ -1,9 +1,2 @@
 ---
-vault_deployment_name: "vault-operator"
-
-vault_image: "quay.io/coreos/vault-operator:latest"
-vault_image_pull_policy: "IfNotPresent"
-
-vault_replicas: 2
-
 state: "present"

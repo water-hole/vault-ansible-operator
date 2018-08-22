@@ -3,9 +3,8 @@
   include_tasks: configmap.yaml
   when: (configmap_lookup|length==0)
 
-- name: Deploy Vault
+- name: Deploy and Reconcile Vault
   include: deployment.yaml
-  when: (vault_deployment_lookup|length==0)
 
 - name: Create service
   include_tasks: service.yaml

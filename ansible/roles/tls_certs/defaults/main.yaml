@@ -26,6 +26,5 @@ vault_server_key_value: "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkF
 # example-default-vault-client-tls
 vault_client_ca_crt_value: "{{ vault_server_ca_crt_value }}"
 
-secret_api_version: "v1"
-
 state: "present"
+

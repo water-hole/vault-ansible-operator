@@ -3,4 +3,4 @@ kind: "VaultService"
 metadata:
   name: "example"
 spec:
-  size: 2
+  vault_replica_size: 2
