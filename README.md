@@ -120,6 +120,37 @@ The following steps are derived from the verification steps describe in the [Vau
     Version            0.9.1
     HA Enabled         true
     ```
+### Verify Vault Cluster Recovery
+
+The deployment will create a Vault cluster with the number of pods defined by the `vault_replica_size` variable in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L6) file (default is 2). Therefore, if a pod is down (or deleted), a new pod should be created.
+
+To test this feature, issue the following command in a terminal window:
+
+```bash
+watch kubectl get pods
+```
+
+Identify one of the Vault pod and manually delete it.  For example, in a new terminal window do the following:
+
+```bash
+kubectl delete pod example-99bcb876-iwkdv
+```
+
+Verify that the pod above is being terminated, and a new pod is created in its place. Also, verify the Vault's operational status (i.e. `vault status`) after the replacement pod is in `Running` state.
+
+## Update Deployment
+
+As stated earlier, the deployment can be updated with a different number of pods for the Vault Cluster (minimum 1).
+
+In order to change the number of pods in your Vault cluster, simply edit the  `vault_replica_size` variable in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L6) file to the desired pod number.  Then run the following command:
+
+```bash
+kubectl apply -f deploy/cr.yaml
+```
+
+Note: You must `apply` the changes since a deployment already exists.  Issuing the `create` command will error.
+
+Verify that the number of pods are created/terminated to match the new `vault_replica_size` value, and the your Vault cluster is still operational afterwards.
 
 ## Uninstall Vault Ansible Operator Deployment
 
