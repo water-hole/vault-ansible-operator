@@ -1,31 +1,31 @@
 ---
 - name: Create vault service
   k8s:
-    state: present
+    state: "{{ state }}"
     definition:
       apiVersion: v1
       kind: Service
       metadata:
+        name: "{{ vault_name }}"
+        namespace: "{{ namespace }}"
         labels:
-          app: vault
-          vault_cluster: example
-        name: example
-        namespace: default
+          app: "{{ vault_app_name }}"
+          vault_cluster: "{{ vault_cluster_name }}"
       spec:
-        ports:
-        - name: vault-client
-          port: 8200
-          protocol: TCP
-          targetPort: 8200
-        - name: vault-cluster
-          port: 8201
-          protocol: TCP
-          targetPort: 8201
-        - name: prometheus
-          port: 9102
-          protocol: TCP
-          targetPort: 9102
-        selector:
-          app: vault
-          vault_cluster: example
         type: ClusterIP
+        selector:
+          app: "{{ vault_app_name }}"
+          vault_cluster: "{{ vault_cluster_name }}"
+        ports:
+        - name: "{{ vault_client_port_name }}"
+          port: "{{ vault_client_port_num }}"
+          protocol: TCP
+          targetPort: "{{ vault_client_port_num }}"
+        - name: "{{ vault_cluster_port_name }}"
+          port: "{{ vault_cluster_port_num }}"
+          protocol: TCP
+          targetPort: "{{ vault_cluster_port_num }}"
+        - name: "{{ vault_prometheus_port_name }}"
+          port: "{{ vault_prometheus_port_num }}"
+          protocol: TCP
+          targetPort: "{{ vault_prometheus_port_num }}"

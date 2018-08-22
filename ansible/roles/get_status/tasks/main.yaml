@@ -1,25 +1,28 @@
 ---
+- set_fact:
+    label_selector_value: "vault_cluster={{ vault_cluster_name }},app={{ vault_app_name }}"
+
 - name: lookup k8s secrets
   set_fact:
-    secrets_lookup: "{{ lookup('k8s', api_version='v1', kind='Secret', namespace='default',
-                          label_selector='vault_cluster=example,app=vault') }}"
+    secrets_lookup: "{{ lookup('k8s', api_version='v1', kind='Secret', namespace=namespace,
+                          label_selector=label_selector_value) }}"
 
 - name: lookup k8s etcd cr
   set_fact:
-    etcd_cr_lookup: "{{ lookup('k8s', api_version='etcd.database.coreos.com/v1beta2', kind='EtcdCluster',
-                    namespace='default', resource_name='example-etcd') }}"
+    etcd_cr_lookup: "{{ lookup('k8s', api_version=etcd_api_version, kind='EtcdCluster',
+                    namespace=namespace, resource_name=etcd_cluster_name) }}"
 
 - name: lookup k8s configmap
   set_fact:
-    configmap_lookup: "{{ lookup('k8s', api_version='v1', kind='ConfigMap', namespace='default',
+    configmap_lookup: "{{ lookup('k8s', api_version='v1', kind='ConfigMap', namespace=namespace,
                           resource_name='example-copy') }}"
 
 - name: lookup k8s service
   set_fact:
-    services_lookup: "{{ lookup('k8s', api_version='v1', kind='Service', namespace='default',
-                          label_selector='vault_cluster=example,app=vault') }}"
+    services_lookup: "{{ lookup('k8s', api_version='v1', kind='Service', namespace=namespace,
+                          label_selector=label_selector_value) }}"
 
 - name: lookup k8s deployment
   set_fact:
-    vault_deployment_lookup: "{{ lookup('k8s', api_version='extensions/v1beta1', kind='Deployment', namespace='default',
-                              resource_name='example') }}"
+    vault_deployment_lookup: "{{ lookup('k8s', api_version='extensions/v1beta1', kind='Deployment', namespace=namespace,
+                              resource_name=vault_cluster_name) }}"
