@@ -1,20 +1,20 @@
 telemetry {
-    statsd_address = "{{ statsd_telemetry_url }}"
+    statsd_address = "localhost:{{ vault_statsd_port_num }}"
 }
 
 listener "tcp" {
-    address         = "{{ vault_listener_addr }}"
-    cluster_address = "{{ vault_listener_cluster_addr }}"
-    tls_cert_file   = "{{ tls_server_cert_file_path }}"
-    tls_key_file    = "{{ tls_server_key_file_path }}"
+    address         = "0.0.0.0:{{ vault_client_port_num }}"
+    cluster_address = "0.0.0.0:{{ vault_cluster_port_num }}"
+    tls_cert_file   = "{{ vault_tls_asset_dir }}/{{ server_tls_cert_name }}"
+    tls_key_file    = "{{ vault_tls_asset_dir }}/{{ server_tls_key_name }}"
 }
 
 storage "etcd" {
-    address       = "{{ etcd_cluster_url }}"
-    etcd_api      = "{{ ectd_api_version }}"
-    ha_enabled    = "{{ etcd_ha_enabled }}"
-    tls_ca_file   = "{{ tls_client_ca_crt_file_path }}"
-    tls_cert_file = "{{ tls_client_cert_file_path }}"
-    tls_key_file  = "{{ tls_client_key_file_path }}"
-    sync          = "{{ etcd_sync }}"
+    address       = "https://{{ vault_cluster_name }}-etcd-client:2379"
+    etcd_api      = "v3"
+    ha_enabled    = "true"
+    tls_ca_file   = "{{ vault_tls_asset_dir }}/{{ client_tls_ca_crt_name }}"
+    tls_cert_file = "{{ vault_tls_asset_dir }}/{{ client_tls_cert_name }}"
+    tls_key_file  = "{{ vault_tls_asset_dir }}/{{ client_tls_key_name }}"
+    sync          = "false"
 }

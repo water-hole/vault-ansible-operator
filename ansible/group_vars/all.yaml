@@ -1,89 +1,23 @@
 ---
 namespace: "default"
-etcd_cluster_name: "example-etcd"
-etcd_operator_name: "etcd-operator"
 
 vault_app_name: "vault"
 vault_cluster_name: "example"
 
-# TLS Cert
-rsa_key_size: 2048
-cert_common_name: "vault operator CA"
-cert_org: "coreos.com"
-cert_domain: "cluster.local"
+vault_version: "0.9.1-0"
+vault_image_name: "quay.io/coreos/vault:{{ vault_version }}"
 
-vault_tls_asset_dir: "/run/vault/tls"
-server_tls_cert_name: "server.crt"
-server_tls_key_name:  "server.key"
-client_tls_ca_crt_name: "etcd-client-ca.crt"
-client_tls_cert_name: "etcd-client.crt"
-client_tls_key_name: "etcd-client.key"
-
-tls_server_cert_file_path: "{{ vault_tls_asset_dir }}/{{ server_tls_cert_name }}"
-tls_server_key_file_path:  "{{ vault_tls_asset_dir }}/{{ server_tls_key_name }}"
-tls_client_ca_crt_file_path: "{{ vault_tls_asset_dir }}/{{ client_tls_ca_crt_name }}"
-tls_client_cert_file_path: "{{ vault_tls_asset_dir }}/{{ client_tls_cert_name }}"
-tls_client_key_file_path: "{{ vault_tls_asset_dir }}/{{ client_tls_key_name }}"
-
+# TLS Cert Secret
 etcd_peer_secret_name: "{{ vault_cluster_name }}-etcd-peer-tls"
 etcd_client_secret_name: "{{ vault_cluster_name }}-etcd-client-tls"
 etcd_server_secret_name: "{{ vault_cluster_name }}-etcd-server-tls"
 vault_client_secret_name: "{{ vault_cluster_name }}-default-vault-client-tls"
 vault_server_secret_name: "{{ vault_cluster_name }}-default-vault-server-tls"
 
-
 # ETCD Cluster
-etcd_cluster_size: 3
-etcd_certs_dir: "/files/"
 etcd_api_version: "etcd.database.coreos.com/v1beta2"
-
-etcd_repository: "quay.io/coreos/etcd"
-etcd_cluster_url: "https://{{ vault_cluster_name }}-etcd-client:2379"
-ectd_api_version: "v3"
-etcd_ha_enabled: "true"
-etcd_sync: "false"
-
+etcd_cluster_name: "example-etcd"
 
 # Vault Cluster
-vault_name: "{{ vault_cluster_name }}"
-vault_configmap_name: "{{ vault_cluster_name }}-copy"
-vault_volume_default_mode: 420
-
-vault_config_path: "/run/vault/config"
-vault_config_file_path: "{{ vault_config_path }}/vault.hcl"
-
-vault_tls_asset_volume_name: "vault-tls-secret"
-vault_config_vol_name: "vault-config"
-vault_redirect_addr_env_name: "VAULT_API_ADDR"
-vault_cluster_addr_env_name: "VAULT_CLUSTER_ADDR"
-vault_redirect_addr_url: "https://{{ vault_cluster_name }}.{{ namespace }}.svc:{{ vault_client_port_num }}"
-vault_cluster_addr_url: "https://{{ vault_cluster_name }}.{{ namespace }}.svc:{{ vault_cluster_port_num }}"
-
-vaultClientPortName: "vault-client"
-vaultClusterPortName: "vault-cluster"
-
-vault_deployment_name: "vault-operator"
-
-vault_deployment_strategy_type: "RollingUpdate"
-vault_deployment_strategy_max_unavailable: 1
-vault_deployment_strategy_max_surge: 1
-
-vault_image_name: "quay.io/coreos/vault:0.9.1-0"
-vault_operator_image: "quay.io/coreos/vault-operator:latest"
-vault_image_pull_policy: "IfNotPresent"
-
-vault_client_port_name: "vault-client"
-vault_cluster_port_name: "vault-cluster"
-vault_statsd_port_name: "statsd"
-vault_prometheus_port_name: "prometheus"
-
-vault_client_port_num: 8200
-vault_cluster_port_num: 8201
-vault_statsd_port_num: 9125
-vault_prometheus_port_num: 9102
-exporter_image_name: "prom/statsd-exporter:v0.5.0"
-
-statsd_telemetry_url: "localhost:{{ vault_statsd_port_num }}"
-
-vault_listener_addr: "0.0.0.0:{{ vault_client_port_num }}"
-vault_listener_cluster_addr: "0.0.0.0:{{ vault_cluster_port_num }}"
+vault_replica_size: 2
+vault_configmap_name: "{{ vault_cluster_name }}-config"
