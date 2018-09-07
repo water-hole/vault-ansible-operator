@@ -1,5 +1,5 @@
 ---
-- name: Create configmap
+- name: Create Default configmap
   include_tasks: configmap.yaml
   when: (configmap_lookup|length==0)
 
