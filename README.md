@@ -140,9 +140,7 @@ Verify that the pod above is being terminated, and a new pod is created in its p
 
 ## Update Deployment
 
-As stated earlier, the deployment can be updated with a different number of pods for the Vault Cluster (minimum 1).
-
-In order to change the number of pods in your Vault cluster, simply edit the  `vault_replica_size` variable in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L6) file to the desired pod number.  Then run the following command:
+In order to update an existing/running deployment, edit the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml) file as described in the various subsections, and run the following command:
 
 ```bash
 kubectl apply -f deploy/cr.yaml
@@ -150,7 +148,71 @@ kubectl apply -f deploy/cr.yaml
 
 Note: You must `apply` the changes since a deployment already exists.  Issuing the `create` command will error.
 
+### Replicas
+
+As stated earlier, the deployment can be updated with a different number of pods for the Vault Cluster (minimum 1).
+
+In order to change the number of pods in your Vault cluster, simply edit the  `vault_replica_size` variable in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L6) file to the desired pod number.
+
 Verify that the number of pods are created/terminated to match the new `vault_replica_size` value, and the your Vault cluster is still operational afterwards.
+
+### Version
+
+The Vault image version can be changed to the available tags in the [vault image repository](https://quay.io/repository/coreos/vault?tab=tags).  To change the version, edit the `vault_version` value in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L7) file to the Vault image tag of your choice.
+
+Verify that the existing pods terminate and new pods are created.  Issue the `kubectl describe pod <pod-name>` command, and verify that the new version of the Vault image was used for the pod. The message section of the description will show the following:
+
+```bash
+Successfully pulled image "quay.io/coreos/vault:<version/tag number>"
+```
+
+### Configuration (ConfigMap)
+
+Vault is configured using [HCL](https://github.com/hashicorp/hcl) files. A user can create a custom ConfigMap to customize the Vault configuration.  The following are the summary of the steps.
+
+    * Create a custom ConfigMap
+    * Create a service reflecting the changes in the ConfigMap (if needed)
+    * Edit the `deploy/cr.yaml` file, and apply the changes
+
+The [`example-custom-configmap.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/example-custom-configmap.yaml) is and example a custom configmap with the Vault client port number changed to `8300`. To create the new ConfigMap, do the following:
+
+```bash
+kubectl apply -f deploy/example-custom-configmap.yaml
+```
+
+Since we changed the client port, we'll need to update the Service (so that our Vault deployment pods are properlty connected together). The [`example-custom-service.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/example-custom-service.yaml) has `8300` for it's `vault-client` port.  To create the new Service, do the following:
+
+```bash
+kubectl apply -f deploy/example-custom-service.yaml
+```
+
+Finally, we'll want to update our Deployment to reflect the changes we've made.  To do so, edit the  [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml) file. It would look something like this:
+
+```bash
+apiVersion: "vault.security.coreos.com/v1alpha1"
+kind: "VaultService"
+metadata:
+  name: "example"
+spec:
+  vault_replica_size: 2
+  vault_version: "0.9.1-0"
+  vault_configmap_name: "example-custom-config"
+  vault_client_port_num: 8300
+  vault_client_port_name: "vault-client2"
+```
+
+Note: Remember to update the `vault_client_port_name` to something other than `vault-client`
+
+Apply the custom resource changes:
+
+```bash
+kubectl apply -f deploy/cr.yaml
+```
+
+Verify that the pods gets recreated.  Do the verification steps but remember to change the port to `8300`.
+
+
+Review the default [ConfigMap](https://github.com/water-hole/vault-ansible-operator/blob/master/ansible/roles/deploy_vault/tasks/configmap.yaml#L15).  There are other values which can be customized. All customized variables must be listed in the `spec` section of the custom resource file (i.e. [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml)).
 
 ## Uninstall Vault Ansible Operator Deployment
 
