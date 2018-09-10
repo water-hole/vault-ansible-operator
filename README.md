@@ -2,36 +2,52 @@
 
 Vault Ansible Operator implements the [vault operator](https://github.com/coreos/vault-operator) with Ansible playbooks via the [Ansible Operator](https://github.com/water-hole/ansible-operator)
 
-
 ## Quickstart
 
 1. Start [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) (e.g. `minikube start`)
-1. Create `rbac.yml` as described in the vault operator's [RBAC guide](https://github.com/coreos/vault-operator/blob/master/doc/user/rbac.md)
-1. Deploy the etcd operator as described [here](https://github.com/coreos/vault-operator#deploying-the-etcd-operator)
+
+    We will be using the `default` namespace, and the `default` account.
+
+1. Deploy the etcd operator
+
+    * Create the etcd RBAC
+
+        ```bash
+        kubectl create -f deploy/etcd_rbac.yaml
+        ```
+
+    * Create the etcd operator Custom Resource Definitions (CRD)
+        ```bash
+        kubectl create -f deploy/etcd_crd.yaml
+        ```
+    * Deploy the etcd operator
+        ```bash
+        kubectl create -f deploy/etcd_operator_deployment.yaml
+        ```
+
 1. Create the Vault Ansible Operator RBAC
 
     ```bash
-    kubectl create -f deploy/rbac.yaml
+    kubectl create -f deploy/vault_rbac.yaml
     ```
 
-1. Create the Vault Ansible Operator CRD
+1. Create the Vault Ansible Operator Custom Resource Difinition (CRD)
 
     ```bash
-    kubectl create -f deploy/crd.yaml
+    kubectl create -f deploy/vault_crd.yaml
     ```
 
-1. Deploy the Vault Ansible Operator
+1. Deploy the Ansible Operator
 
     ```bash
-    kubectl create -f deploy/operator.yaml
+    kubectl create -f deploy/ansible_operator_deployment.yaml
     ```
 
-1. Create the Vault CR
+1. Create the Vault Ansible Operator Custom Resource (CR)
 
     ```bash
-    kubectl create -f deploy/cr.yaml
+    kubectl create -f deploy/vault_cr.yaml
     ```
-
 
 ## Verify Vault Deployment
 
@@ -120,6 +136,7 @@ The following steps are derived from the verification steps describe in the [Vau
     Version            0.9.1
     HA Enabled         true
     ```
+
 ### Verify Vault Cluster Recovery
 
 The deployment will create a Vault cluster with the number of pods defined by the `vault_replica_size` variable in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L6) file (default is 2). Therefore, if a pod is down (or deleted), a new pod should be created.
@@ -210,7 +227,6 @@ kubectl apply -f deploy/cr.yaml
 ```
 
 Verify that the pods gets recreated.  Do the verification steps but remember to change the port to `8300`.
-
 
 Review the default [ConfigMap](https://github.com/water-hole/vault-ansible-operator/blob/master/ansible/roles/deploy_vault/tasks/configmap.yaml#L15).  There are other values which can be customized. All customized variables must be listed in the `spec` section of the custom resource file (i.e. [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml)).
 
