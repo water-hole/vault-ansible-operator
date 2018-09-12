@@ -56,7 +56,7 @@ Vault Ansible Operator implements the [vault operator](https://github.com/coreos
 Issue the `kubectl get pods` command, and verify that you have the following pods
 
 ```bash
-ansible-operator    // Vault Ansible Operator
+ansible-operator    // Ansible Operator
 
 etc-operator (3)    // ETCD Operator
 
@@ -139,7 +139,7 @@ The following steps are derived from the verification steps describe in the [Vau
 
 ### Verify Vault Cluster Recovery
 
-The deployment will create a Vault cluster with the number of pods defined by the `vault_replica_size` variable in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L6) file (default is 2). Therefore, if a pod is down (or deleted), a new pod should be created.
+The deployment will create a Vault cluster with the number of pods defined by the `vault_replica_size` variable in the [`deploy/vault_cr.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/vault_cr.yaml#L6) file (default is 2). Therefore, if a pod is down (or deleted), a new pod should be created.
 
 To test this feature, issue the following command in a terminal window:
 
@@ -157,10 +157,10 @@ Verify that the pod above is being terminated, and a new pod is created in its p
 
 ## Update Deployment
 
-In order to update an existing/running deployment, edit the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml) file as described in the various subsections, and run the following command:
+In order to update an existing/running deployment, edit the [`deploy/vault_cr.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/vault_cr.yaml) file as described in the various subsections, and run the following command:
 
 ```bash
-kubectl apply -f deploy/cr.yaml
+kubectl apply -f deploy/vault_cr.yaml
 ```
 
 Note: You must `apply` the changes since a deployment already exists.  Issuing the `create` command will error.
@@ -169,13 +169,13 @@ Note: You must `apply` the changes since a deployment already exists.  Issuing t
 
 As stated earlier, the deployment can be updated with a different number of pods for the Vault Cluster (minimum 1).
 
-In order to change the number of pods in your Vault cluster, simply edit the  `vault_replica_size` variable in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L6) file to the desired pod number.
+In order to change the number of pods in your Vault cluster, simply edit the  `vault_replica_size` variable in the [`deploy/vault_cr.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/vault_cr.yaml#L6) file to the desired pod number.
 
 Verify that the number of pods are created/terminated to match the new `vault_replica_size` value, and the your Vault cluster is still operational afterwards.
 
 ### Version
 
-The Vault image version can be changed to the available tags in the [vault image repository](https://quay.io/repository/coreos/vault?tab=tags).  To change the version, edit the `vault_version` value in the [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml#L7) file to the Vault image tag of your choice.
+The Vault image version can be changed to the available tags in the [vault image repository](https://quay.io/repository/coreos/vault?tab=tags).  To change the version, edit the `vault_version` value in the [`deploy/vault_cr.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/vault_cr.yaml#L7) file to the Vault image tag of your choice.
 
 Verify that the existing pods terminate and new pods are created.  Issue the `kubectl describe pod <pod-name>` command, and verify that the new version of the Vault image was used for the pod. The message section of the description will show the following:
 
@@ -189,7 +189,7 @@ Vault is configured using [HCL](https://github.com/hashicorp/hcl) files. A user 
 
     * Create a custom ConfigMap
     * Create a service reflecting the changes in the ConfigMap (if needed)
-    * Edit the `deploy/cr.yaml` file, and apply the changes
+    * Edit the `deploy/vault_cr.yaml` file, and apply the changes
 
 The [`example-custom-configmap.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/example-custom-configmap.yaml) is and example a custom configmap with the Vault client port number changed to `8300`. To create the new ConfigMap, do the following:
 
@@ -203,7 +203,7 @@ Since we changed the client port, we'll need to update the Service (so that our 
 kubectl apply -f deploy/example-custom-service.yaml
 ```
 
-Finally, we'll want to update our Deployment to reflect the changes we've made.  To do so, edit the  [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml) file. It would look something like this:
+Finally, we'll want to update our Deployment to reflect the changes we've made.  To do so, edit the  [`deploy/vault_cr.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/vault_cr.yaml) file. It would look something like this:
 
 ```bash
 apiVersion: "vault.security.coreos.com/v1alpha1"
@@ -223,24 +223,24 @@ Note: Remember to update the `vault_client_port_name` to something other than `v
 Apply the custom resource changes:
 
 ```bash
-kubectl apply -f deploy/cr.yaml
+kubectl apply -f deploy/vault_cr.yaml
 ```
 
 Verify that the pods gets recreated.  Do the verification steps but remember to change the port to `8300`.
 
-Review the default [ConfigMap](https://github.com/water-hole/vault-ansible-operator/blob/master/ansible/roles/deploy_vault/tasks/configmap.yaml#L15).  There are other values which can be customized. All customized variables must be listed in the `spec` section of the custom resource file (i.e. [`deploy/cr.yaml`](https://github.com/johnkim76/vault-ansible-operator/blob/master/deploy/cr.yaml)).
+Review the default [ConfigMap](https://github.com/water-hole/vault-ansible-operator/blob/master/ansible/roles/deploy_vault/tasks/configmap.yaml#L15).  There are other values which can be customized. All customized variables must be listed in the `spec` section of the custom resource file (i.e. [`deploy/vault_cr.yaml`](https://github.com/water-hole/vault-ansible-operator/blob/master/deploy/vault_cr.yaml)).
 
-## Uninstall Vault Ansible Operator Deployment
+## Uninstall
 
-To uninstall the Vault Deployment and the Operator, run the following commands
+To uninstall the Vault Deployment and the Ansible Operator, run the following commands
 
 1. Uninstall Vault
     ```bash
-    kubectl delete -f deploy/cr.yaml
+    kubectl delete -f deploy/vault_cr.yaml
     ```
 1. Uninstall Vault Ansible Operator
     ```bash
-    kubectl delete -f deploy/operator.yaml
+    kubectl delete -f deploy/ansible_operator_deployment.yaml
     ```
 
 Verify that the all pods created with the deployment are being `terminated` and are deleted
