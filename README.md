@@ -37,10 +37,10 @@ Vault Ansible Operator implements the [vault operator](https://github.com/coreos
     kubectl create -f deploy/vault_crd.yaml
     ```
 
-1. Deploy the Ansible Operator
+1. Deploy the Vault Ansible Operator
 
     ```bash
-    kubectl create -f deploy/ansible_operator_deployment.yaml
+    kubectl create -f deploy/vault_ansible_operator_deployment.yaml
     ```
 
 1. Create the Vault Ansible Operator Custom Resource (CR)
@@ -56,13 +56,13 @@ Vault Ansible Operator implements the [vault operator](https://github.com/coreos
 Issue the `kubectl get pods` command, and verify that you have the following pods
 
 ```bash
-ansible-operator    // Ansible Operator
+vault-ansible-operator    // Vault Ansible Operator
 
-etc-operator (3)    // ETCD Operator
+etc-operator (3)          // ETCD Operator
 
-example-etcd (3)    // ETCD Cluster Pods
+example-etcd (3)          // ETCD Cluster Pods
 
-example (2)         // Vault Cluster Pods
+example (2)               // Vault Cluster Pods
 ```
 
 ### Verify Vault
@@ -232,7 +232,7 @@ Review the default [ConfigMap](https://github.com/water-hole/vault-ansible-opera
 
 ## Uninstall
 
-To uninstall the Vault Deployment and the Ansible Operator, run the following commands
+To uninstall the Vault Deployment and the Vault Ansible Operator, run the following commands
 
 1. Uninstall Vault
     ```bash
@@ -240,7 +240,7 @@ To uninstall the Vault Deployment and the Ansible Operator, run the following co
     ```
 1. Uninstall Vault Ansible Operator
     ```bash
-    kubectl delete -f deploy/ansible_operator_deployment.yaml
+    kubectl delete -f deploy/vault_ansible_operator_deployment.yaml
     ```
 
 Verify that the all pods created with the deployment are being `terminated` and are deleted

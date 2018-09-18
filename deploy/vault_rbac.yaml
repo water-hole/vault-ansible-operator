@@ -41,6 +41,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: default
+  namespace: default
 roleRef:
   kind: ClusterRole
   name: vault-ansible-operator-role
