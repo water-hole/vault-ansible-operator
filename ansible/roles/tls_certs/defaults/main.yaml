@@ -7,7 +7,7 @@ cert_org: "coreos.com"
 cert_domain: "cluster.local"
 
 default_days: "365"
-cert_dir: "/tmp/vault_certs"
+cert_dir: "/tmp/{{ vault_cluster_name }}_vault_certs"
 
 # OpenSSL Conf
 ca_crt_conf_filename: "{{ cert_dir }}/ca_crt.conf"
