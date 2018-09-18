@@ -1,4 +1,4 @@
-FROM quay.io/jkig/ansible-operator
+FROM quay.io/water-hole/ansible-operator
 
 COPY ansible/group_vars/ ${HOME}/group_vars/
 COPY ansible/roles/ ${HOME}/roles/
