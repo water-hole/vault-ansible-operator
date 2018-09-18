@@ -10,3 +10,4 @@
 
 - name: Create Secrets for Certs
   include: create_secrets.yaml
+  when: (secrets_lookup|length==0)

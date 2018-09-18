@@ -17,17 +17,17 @@
     configmap_lookup: "{{ lookup('k8s', api_version='v1', kind='ConfigMap', namespace=namespace,
                           resource_name=vault_configmap_name) }}"
 
-- name: lookup k8s service
+- name: lookup k8s Vault cluster service
   set_fact:
     services_lookup: "{{ lookup('k8s', api_version='v1', kind='Service', namespace=namespace,
                           label_selector=label_selector_value) }}"
 
-- name: lookup k8s deployment
+- name: lookup k8s Vault cluster deployment
   set_fact:
     vault_deployment_lookup: "{{ lookup('k8s', api_version='extensions/v1beta1', kind='Deployment', namespace=namespace,
                               resource_name=vault_cluster_name) }}"
 
-- name: lookup k8s deployment
+- name: lookup k8s VaultService (vault)
   set_fact:
     vault_service_lookup: "{{ lookup('k8s', api_version='vault.security.coreos.com/v1alpha1', kind='VaultService', namespace=namespace,
                               resource_name=vault_cluster_name) }}"
