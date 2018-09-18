@@ -1,7 +1,7 @@
-kind: Role
+kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: ansible-operator
+  name: vault-ansible-operator-role
 rules:
 - apiGroups:
   - vault.security.coreos.com
@@ -34,14 +34,15 @@ rules:
 
 ---
 
-kind: RoleBinding
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: default-account-app-operator
+  name: vault-operator-rolebinding
 subjects:
 - kind: ServiceAccount
   name: default
+  namespace: default
 roleRef:
-  kind: Role
-  name: ansible-operator
+  kind: ClusterRole
+  name: vault-ansible-operator-role
   apiGroup: rbac.authorization.k8s.io

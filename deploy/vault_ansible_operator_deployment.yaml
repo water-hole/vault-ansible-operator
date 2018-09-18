@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ansible-operator
+  name: vault-ansible-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: ansible-operator
+      name: vault-ansible-operator
   template:
     metadata:
       labels:
-        name: ansible-operator
+        name: vault-ansible-operator
     spec:
       containers:
-        - name: ansible-operator
+        - name: vault-ansible-operator
           image: quay.io/jkig/vault-ansible-operator:latest
           imagePullPolicy: Always
           env:
