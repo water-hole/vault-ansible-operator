@@ -51,6 +51,15 @@ Vault Ansible Operator implements the [vault operator](https://github.com/coreos
 
 ## Verify Vault Deployment
 
+### Install Vault (CLI)
+
+Follow instructions [here](https://www.vaultproject.io/docs/install/index.html) to get `vault` CLI binary in your system. Then run the `vault version` command to verify that `vault` is installed.  The output will look similar to below:
+
+```bash
+$ vault version
+Vault v0.11.1 ('8575f8fedcf8f5a6eb2b4701cb527b99574b5286')
+```
+
 ### Check pods
 
 Issue the `kubectl get pods` command, and verify that you have the following pods
